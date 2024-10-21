@@ -12,7 +12,8 @@ export default function Page() {
     if (typeof window !== "undefined") {
       (async () => {
         const session = await meet.addon.createAddonSession({
-          cloudProjectNumber: "884305326443",
+          cloudProjectNumber:
+            "884305326443-g3fb16qljph6d5f6sj7psv3275m2n2ut.apps.googleusercontent.com",
         });
         await session.createMainStageClient();
       })();
