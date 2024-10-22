@@ -1,31 +1,40 @@
 "use client";
 
-import { useEffect } from "react";
-import { meet } from "@googleworkspace/meet-addons/meet.addons";
+import { useEffect, useState } from "react";
+import {
+  meet,
+  MeetSidePanelClient,
+} from "@googleworkspace/meet-addons/meet.addons";
 
 export default function Page() {
+  const [sidePanelClient, setSidePanelClient] = useState<MeetSidePanelClient>();
+
+  // Launches the main stage when the main button is clicked.
+  async function startActivity(e: unknown) {
+    if (!sidePanelClient) {
+      throw new Error("Side Panel is not yet initialized!");
+    }
+    await sidePanelClient.startActivity({
+      mainStageUrl: "/start",
+    });
+  }
+
   /**
-   * Prepares the Add-on Main Stage Client, which signals that the add-on
-   * has successfully launched in the main stage.
+   * Prepares the Add-on Side Panel Client.
    */
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      (async () => {
-        const session = await meet.addon.createAddonSession({
-          cloudProjectNumber:
-            "884305326443-g3fb16qljph6d5f6sj7psv3275m2n2ut.apps.googleusercontent.com",
-        });
-        await session.createMainStageClient();
-      })();
-    }
+    (async () => {
+      const session = await meet.addon.createAddonSession({
+        cloudProjectNumber: "884305326443",
+      });
+      setSidePanelClient(await session.createSidePanelClient());
+    })();
   }, []);
 
   return (
     <>
-      <div>
-        This is the Add-on Main Stage. Everyone in the call can see this.
-      </div>
-      <div>Hello, world!</div>
+      <div>This is the Add-on Side Panel. Only you can see this.</div>
+      <button onClick={startActivity}>Launch Activity in Main Stage.</button>
     </>
   );
 }
